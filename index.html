@@ -343,7 +343,7 @@ function escape(s){
   return result;
 }
 function id(s){
-  return s.replace(/end/g,"END");
+  return s.replace(/end/g,"END").replace(/default/g,"DEFAULT");
 }
 
 function redraw(){
@@ -357,10 +357,10 @@ function redraw(){
     var conditions = {};
     // list steps
     doc.steps.forEach((v) => {
-      strList.push(id(v.name));
+      strList.push(id(doc.name) + ":" + id(v.name) + "(" + escape(id(v.name)) + ")");
       if(v.depends_on){
         v.depends_on.forEach((c) =>{
-          strList.push(id(c) + " --> " + id(v.name))
+          strList.push(id(doc.name) + ":" + id(c) + " --> " + id(doc.name) + ":" + id(v.name))
         })
       }
       if(v.when){
@@ -377,7 +377,7 @@ function redraw(){
     for(var c in conditions){
       strList.push("subgraph " + c)
       conditions[c].forEach((v) => {
-        strList.push(id(v))
+        strList.push(id(doc.name) + ":" + id(v))
       })
       strList.push("end")
     }
@@ -395,6 +395,9 @@ function redraw(){
   var graph = document.getElementById("graph");
   graph.innerHTML = "";
   graph.appendChild(elm);
+  mermaid.parseError = function(err, hash){
+    console.log(err)
+  }
   mermaid.init(undefined, elm,function(){})
 
 }
