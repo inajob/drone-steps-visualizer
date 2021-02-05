@@ -29,6 +29,7 @@ h2{
 <body>
   <h1>Drone Steps Visualizer</h1>
   <div><a href="https://github.com/inajob/drone-tasks-visualizer">source code</a></div>
+  <div><input type="checkbox" id="lr">LR</div>
   <table id="layout">
   <td>
   <textarea id="area">
@@ -350,8 +351,14 @@ function redraw(){
   var str = area.value;
   var docs = jsyaml.loadAll(str)
 
+  var lrFlag = lr.checked;
 
-  var strList = ["flowchart TB"];
+  var strList = [];
+  if(lrFlag){
+    strList.push("flowchart LR");
+  }else{
+    strList.push("flowchart TB");
+  }
   docs.forEach((doc) => {
     strList.push("subgraph pipeline:"  + doc.name)
     var conditions = {};
@@ -403,6 +410,8 @@ function redraw(){
 }
 
 var area = document.getElementById("area");
+var lrElm = document.getElementById("lr");
+lrElm.addEventListener("change", function(){redraw()});
 area.addEventListener("input", function(){
   redraw();
 });
